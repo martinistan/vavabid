@@ -1,11 +1,7 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $Host.UI.RawUI.WindowTitle = "Umutistan Vavabid - GitHub Push"
 
-Clear-Host
-Write-Host "======================================================================" -ForegroundColor Cyan
-Write-Host "   UMUTISTAN DOLANDIRICILIK HIZMETLERI (VAVABID) - GITHUB PUSH        " -ForegroundColor Yellow
-Write-Host "======================================================================" -ForegroundColor Cyan
-Write-Host ""
+$tokenUrl = "https://github.com/settings/tokens/new?description=vavabid-upload&scopes=repo"
 
 $desktop = Join-Path $HOME "OneDrive\Desktop"
 if (-not (Test-Path $desktop)) {
@@ -15,66 +11,104 @@ if (-not (Test-Path $desktop)) {
 $repoFolder = Get-ChildItem -Path $desktop -Filter "*umutistan*" -Directory | Select-Object -First 1
 if (-not $repoFolder) {
     Write-Host "HATA: Proje klasoru Masaustunde bulunamadi!" -ForegroundColor Red
-    Write-Host "Cikmak icin bir tusa basin..." -ForegroundColor Gray
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    exit 1
+    return
 }
 
 Set-Location -LiteralPath $repoFolder.FullName
-Write-Host "Proje Dizini: $($repoFolder.FullName)" -ForegroundColor Gray
-Write-Host "Hedef Depo  : https://github.com/martinistan/vavabid" -ForegroundColor Gray
-Write-Host "Dal         : main" -ForegroundColor Gray
-Write-Host ""
 
-$tokenUrl = "https://github.com/settings/tokens/new?description=vavabid-upload&scopes=repo"
-
-Write-Host "GitHub'a yukleniyor..." -ForegroundColor Green
-Write-Host "(Tarayici acilirsa 'Sign in with your browser' ile giris yapin)" -ForegroundColor Gray
-Write-Host ""
-
-git push -u origin main
-
-if ($LASTEXITCODE -eq 0) {
-    Write-Host ""
-    Write-Host "======================================================================" -ForegroundColor Green
-    Write-Host "   TEBRIKLER! REPO BASARIYLA GITHUB'A YUKLENDI!                       " -ForegroundColor Green
-    Write-Host "   Link: https://github.com/martinistan/vavabid                       " -ForegroundColor Yellow
-    Write-Host "======================================================================" -ForegroundColor Green
-} else {
-    Write-Host ""
-    Write-Host "======================================================================" -ForegroundColor Red
-    Write-Host "   GIRIS GEREKIYOR VEYA HATA OLUSTU                                   " -ForegroundColor Red
-    Write-Host "======================================================================" -ForegroundColor Red
-    Write-Host ""
-    Write-Host "Hic aramakla ugrasmamaniz icin dogrudan Token alma linki hazirlandi:" -ForegroundColor Yellow
-    Write-Host "Link: $tokenUrl" -ForegroundColor Cyan
-    Write-Host ""
-    
-    $openBrowser = Read-Host "Token sayfasini tarayicinizda simdi acalim mi? (E/H - Varsayilan: Evet)"
-    if ($openBrowser -eq "" -or $openBrowser -match "^[eEyY]") {
-        Write-Host "Tarayici aciliyor... (Sayfanin en altindaki 'Generate token' butonuna tiklayin)" -ForegroundColor Green
-        Start-Process $tokenUrl
+function Push-With-Token {
+    param([string]$tok)
+    if (-not $tok -or $tok.Trim() -eq "") {
+        Write-Host "Token bos olamaz!" -ForegroundColor Yellow
+        return
     }
-    
+    $t = $tok.Trim()
     Write-Host ""
-    $token = Read-Host "Aldiginiz Tokeni buraya yapistirin ve Enter'a basin"
-    if ($token -and $token.Trim() -ne "") {
+    Write-Host "Token ile GitHub'a yukleniyor..." -ForegroundColor Cyan
+    git push https://$t@github.com/martinistan/vavabid.git main
+    if ($LASTEXITCODE -eq 0) {
         Write-Host ""
-        Write-Host "Token ile yukleniyor..." -ForegroundColor Cyan
-        git push https://$($token.Trim())@github.com/martinistan/vavabid.git main
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host ""
-            Write-Host "======================================================================" -ForegroundColor Green
-            Write-Host "   TEBRIKLER! REPO TOKEN ILE BASARIYLA YUKLENDI!                      " -ForegroundColor Green
-            Write-Host "   Link: https://github.com/martinistan/vavabid                       " -ForegroundColor Yellow
-            Write-Host "======================================================================" -ForegroundColor Green
-        } else {
-            Write-Host ""
-            Write-Host "Yukleme basarisiz oldu. Tokenin 'repo' yetkisine sahip oldugundan emin olun." -ForegroundColor Red
-        }
+        Write-Host "======================================================================" -ForegroundColor Green
+        Write-Host "   TEBRIKLER! REPO BASARIYLA GITHUB'A YUKLENDI!                       " -ForegroundColor Green
+        Write-Host "   👉 https://github.com/martinistan/vavabid                          " -ForegroundColor Yellow
+        Write-Host "======================================================================" -ForegroundColor Green
+    } else {
+        Write-Host ""
+        Write-Host "Yukleme basarisiz oldu. Tokenin dogrulugunu ve 'repo' yetkisini kontrol edin." -ForegroundColor Red
     }
 }
 
-Write-Host ""
-Write-Host "Kapatmak icin bir tusa basin..." -ForegroundColor Gray
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+while ($true) {
+    Clear-Host
+    Write-Host "======================================================================" -ForegroundColor Cyan
+    Write-Host "   UMUTISTAN DOLANDIRICILIK HIZMETLERI (VAVABID) - GITHUB PUSH        " -ForegroundColor Yellow
+    Write-Host "======================================================================" -ForegroundColor Cyan
+    Write-Host "Proje Dizini: $($repoFolder.FullName)" -ForegroundColor Gray
+    Write-Host "Hedef Depo  : https://github.com/martinistan/vavabid" -ForegroundColor Gray
+    Write-Host "Dal         : main" -ForegroundColor Gray
+    Write-Host "======================================================================" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Lutfen yapmak istediginiz islemi secin:" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  [1] Tarayicida Token Olusturma Sayfasini Ac (Tek tikla acar)" -ForegroundColor Yellow
+    Write-Host "  [2] Token Yapistir ve Hemen Yukle" -ForegroundColor Green
+    Write-Host "  [3] Normal Push Dene (Tarayici oturum acma penceresi dener)" -ForegroundColor Cyan
+    Write-Host "  [4] Git Durumunu Goruntule (git status)" -ForegroundColor Gray
+    Write-Host "  [0] Cikis" -ForegroundColor DarkGray
+    Write-Host ""
+    
+    $choice = Read-Host "Seciminiz (1/2/3/4/0)"
+    
+    switch ($choice) {
+        "1" {
+            Write-Host ""
+            Write-Host "Tarayici aciliyor... ($tokenUrl)" -ForegroundColor Green
+            Write-Host "Sayfanin en altina inip yesil 'Generate token' butonuna basin ve tokeni kopyalayin." -ForegroundColor Yellow
+            Start-Process $tokenUrl
+            Write-Host ""
+            $tok = Read-Host "Kopyaladiginiz Tokeni buraya yapistirin ve Enter'a basin"
+            if ($tok -and $tok.Trim() -ne "") {
+                Push-With-Token -tok $tok
+            }
+            Write-Host ""
+            Read-Host "Devam etmek icin Enter'a basin"
+        }
+        "2" {
+            Write-Host ""
+            $tok = Read-Host "GitHub Personal Access Tokeninizi yapistirin"
+            if ($tok -and $tok.Trim() -ne "") {
+                Push-With-Token -tok $tok
+            }
+            Write-Host ""
+            Read-Host "Devam etmek icin Enter'a basin"
+        }
+        "3" {
+            Write-Host ""
+            Write-Host "Normal push baslatiliyor... (Tarayici gelirse onaylayin)" -ForegroundColor Cyan
+            git push -u origin main
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host ""
+                Write-Host "TEBRIKLER! Basariyla yuklendi!" -ForegroundColor Green
+            } else {
+                Write-Host ""
+                Write-Host "Push tamamlanamadi. Menu'den 1 veya 2'yi secerek Token ile yukleyebilirsiniz." -ForegroundColor Yellow
+            }
+            Write-Host ""
+            Read-Host "Devam etmek icin Enter'a basin"
+        }
+        "4" {
+            Write-Host ""
+            git status
+            Write-Host ""
+            Read-Host "Devam etmek icin Enter'a basin"
+        }
+        "0" {
+            Write-Host "Cikiliyor..." -ForegroundColor Gray
+            return
+        }
+        default {
+            Write-Host "Gecersiz secim!" -ForegroundColor Red
+            Start-Sleep -Seconds 1
+        }
+    }
+}
