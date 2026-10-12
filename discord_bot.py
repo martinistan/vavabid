@@ -1,7 +1,10 @@
-"""
-Umutistan Dolandiricilik Hizmetleri - Discord Bot & Autonomous Gateway
-Slash Commands, Gizli Kategori/Kanal Sistemi ve Otomatik Ekran Goruntusu Yonetimi
-"""
+# ============================================================================
+# MARTINISTAN VAVABID DISCORD SUITE & AUTONOMOUS GATEWAY
+# Architected & Developed by: Martinistan / Martiny (@martinistan)
+# ============================================================================
+
+MARTINY_AUTHOR = "martinistan"
+MARTINY_VERSION = "2.0"
 
 import discord
 from discord import app_commands

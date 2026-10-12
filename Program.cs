@@ -1,3 +1,8 @@
+// ============================================================================
+// MARTINISTAN VAVABID ENTRY POINT
+// Developed by Martinistan / Martiny (@martinistan)
+// ============================================================================
+
 using System;
 using System.Windows.Forms;
 

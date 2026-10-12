@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Umutistan Luxury Topbar</title>
+  <style>
+    :root {
+      --bg-top: #09090c;
+      --bg-tab-active: #18181f;
+      --bg-tab-inactive: #0d0d12;
+      --bg-tab-hover: #14141a;
+      --border: #22222a;
+      --accent-emerald: #10b981;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.4);
+      --accent-cyan: #06b6d4;
+      --accent-red: #ef4444;
+      --text-main: #f4f4f6;
+      --text-muted: #8e8e9a;
+      --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-top);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 1. Brand Logo Left */
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 14px;
+      padding-right: 12px;
+      height: 100%;
+      cursor: move;
+    }
+
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 6px var(--accent-emerald-glow));
+    }
+
+    .brand-text {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent-emerald);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    /* 2. Tabs Container (Chrome Style) */
+    .tabs-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      height: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-top: 6px;
+      padding-left: 6px;
+      gap: 4px;
+      cursor: move;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chrome-tab {
+      height: 36px;
+      background: var(--bg-tab-inactive);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      position: relative;
+      transition: all 0.15s ease;
+      min-width: 120px;
+      max-width: 190px;
+    }
+
+    .chrome-tab:hover {
+      background: var(--bg-tab-hover);
+      color: #fff;
+    }
+
+    .chrome-tab.active {
+      background: var(--bg-tab-active);
+      color: #fff;
+      font-weight: 700;
+      border-color: #30303c;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .chrome-tab.active::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald-glow);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .tab-icon {
+      font-size: 11px;
+    }
+
+    .tab-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tab-close {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+    }
+
+    .tab-close:hover {
+      background: var(--accent-red);
+      color: #fff;
+    }
+
+    /* Fixed Navigation Tabs */
+    .btn-nav-tab {
+      height: 32px;
+      background: #15151c;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 0 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-nav-tab:hover {
+      background: #20202a;
+      color: #fff;
+      border-color: #3b3b4a;
+    }
+
+    .btn-nav-tab.active {
+      background: var(--accent-emerald);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald-glow);
+    }
+
+    .btn-add-tab {
+      width: 30px;
+      height: 30px;
+      background: #15151c;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-add-tab:hover {
+      background: #22222e;
+      color: #fff;
+      border-color: #404052;
+    }
+
+    /* 3. Window Controls Right */
+    .window-controls {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .win-btn {
+      width: 44px;
+      height: 46px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .win-btn:hover {
+      background: #1c1c24;
+      color: #fff;
+    }
+
+    .win-btn.close:hover {
+      background: var(--accent-red);
+      color: #fff;
+    }
+  </style>
+  <link rel="stylesheet" href="ui-theme.css">
+</head>
+<body class="topbar compact-brand">
+
+  <!-- Brand Left -->
+  <button class="brand-section" title="Umutistan ana sayfa" onclick="sendAction('home')">
+    <img src="brand-mark.svg" class="brand-icon" alt="Umutistan">
+    <span class="brand-text">UMUTİSTAN</span>
+  </button>
+
+  <!-- Tabs Center -->
+  <div class="tabs-wrapper" id="tabsWrapper" onmousedown="triggerDrag(event)">
+    <div id="tabsList" style="display: flex; gap: 4px; align-items: flex-end;">
+      <!-- Dynamic Chrome Tabs -->
+    </div>
+
+    <!-- Add Tab Button -->
+    <button class="btn-add-tab" title="Yeni İhale Sekmesi Ekle" onclick="sendAction('add_tab')">+</button>
+    <div class="caption-space" title="Taşı: sürükle · Büyüt / geri döndür: çift tık"></div>
+  </div>
+  <div class="title-actions">
+    <!-- Terminal Tab -->
+    <button id="btnTerminal" class="btn-nav-tab" title="Terminal" onclick="sendAction('open_terminal')">
+      <svg class="ui-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="3"/><path d="m6 8 4 4-4 4m7 0h5"/></svg><span class="nav-label">Terminal</span>
+    </button>
+
+    <!-- Web Panel Tab -->
+    <button id="btnWebPanel" class="btn-nav-tab" title="Web Panel" onclick="sendAction('open_web_panel')">
+      <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18"/></svg><span class="nav-label">Web Panel</span>
+    </button>
+
+    <!-- Settings Tab -->
+    <button id="btnSettings" class="btn-nav-tab" title="Ayarlar" onclick="sendAction('open_settings')">
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3" fill="#0a1010"/><circle cx="16" cy="17" r="3" fill="#0a1010"/></svg><span class="nav-label">Ayarlar</span>
+    </button>
+  </div>
+
+  <!-- Window Controls Right -->
+  <div class="window-controls">
+    <button class="win-btn" title="Küçült" onclick="sendAction('minimize')">—</button>
+    <button class="win-btn" title="Büyüt / Normal" onclick="sendAction('maximize')">□</button>
+    <button class="win-btn close" title="Kapat" onclick="sendAction('close')">✕</button>
+  </div>
+
+  <script>
+    function triggerDrag(e) {
+      if (e.target.closest('button, .chrome-tab, .tab-close')) return;
+      if (e.button === 0 && window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({ action: 'start_drag' });
+      }
+    }
+
+    function sendAction(actName) {
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({ action: actName });
+      }
+    }
+
+    function selectTab(idx, e) {
+      if (e.target.closest('.tab-close')) return;
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({ action: 'select_tab', index: idx });
+      }
+    }
+
+    function closeTab(idx, e) {
+      e.stopPropagation();
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({ action: 'close_tab', index: idx });
+      }
+    }
+
+    // Called dynamically by C# to render tabs
+    window.renderTabs = function(tabsArray, isSettingsOpen) {
+      const list = document.getElementById('tabsList');
+      if (!list) return;
+      list.innerHTML = '';
+
+      const btnSettings = document.getElementById('btnSettings');
+      if (btnSettings) {
+        if (isSettingsOpen) btnSettings.classList.add('active');
+        else btnSettings.classList.remove('active');
+      }
+
+      if (!tabsArray || !tabsArray.length) return;
+
+      tabsArray.forEach((t) => {
+        const tabEl = document.createElement('div');
+        tabEl.className = 'chrome-tab' + (t.active ? ' active' : '');
+        tabEl.onclick = (e) => selectTab(t.index, e);
+
+        const icon = t.pinned ? '◆' : (t.armed ? '●' : '◇');
+        tabEl.innerHTML = `
+          <span class="tab-icon">${icon}</span>
+          <span class="tab-title" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</span>
+          ${t.pinned ? '' : `<span class="tab-close" title="Kapat" onclick="closeTab(${t.index}, event)">✕</span>`}
+        `;
+        list.appendChild(tabEl);
+      });
+    };
+
+    function escapeHtml(text) {
+      return (text || '').replace(/&/g, '&amp;')
+                         .replace(/</g, '&lt;')
+                         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R'))) {
+        e.preventDefault();
+        if (window.chrome && window.chrome.webview) {
+          window.chrome.webview.postMessage({ action: 'nav_reload' });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

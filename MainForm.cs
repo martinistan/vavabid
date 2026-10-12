@@ -15,10 +15,19 @@ using System.Windows.Forms;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 
+// ============================================================================
+// MARTINISTAN VAVABID AUTONOMOUS SNIPER SUITE
+// Developed & Architected by Martinistan / Martiny (@martinistan)
+// ============================================================================
+
 namespace VakantieVeilingenBieder
 {
     public sealed class MainForm : Form
     {
+        public const string MartinyAuthor = "martinistan";
+        public const string MartinyEngineVersion = "v2.0";
+        public const string MartinySignature = "Developed by Martinistan / Martiny (@martinistan)";
+
         const string DefaultHome = "https://www.vakantieveilingen.be/";
         static readonly Color BgDark = Color.Black;
         static readonly Color BgSidebar = Color.Black;
@@ -852,14 +861,30 @@ namespace VakantieVeilingenBieder
             };
         }
 
+        string ResolveAssetPath(string fileName, string subfolder)
+        {
+            string rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+            if (File.Exists(rootPath)) return rootPath;
+            if (!string.IsNullOrEmpty(subfolder)) {
+                string sub = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, subfolder, fileName);
+                if (File.Exists(sub)) return sub;
+                string srcSub = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "src", subfolder, fileName);
+                if (File.Exists(srcSub)) return srcSub;
+            }
+            if (File.Exists(fileName)) return fileName;
+            return rootPath;
+        }
+
         async void OnLoaded(object sender, EventArgs e)
         {
             try {
                 Directory.CreateDirectory(profilePath);
                 Directory.CreateDirectory(screenshotsPath);
 
-                adapterScript = File.Exists("adapter.js") ? File.ReadAllText("adapter.js") : "";
-                darkCss = File.Exists("site-dark.css") ? File.ReadAllText("site-dark.css") : "";
+                string adapterFile = ResolveAssetPath("adapter.js", "frontend");
+                adapterScript = File.Exists(adapterFile) ? File.ReadAllText(adapterFile) : "";
+                string darkCssFile = ResolveAssetPath("site-dark.css", "frontend");
+                darkCss = File.Exists(darkCssFile) ? File.ReadAllText(darkCssFile) : "";
 
                 // Pure Chromium Force Dark Mode Options
                 CoreWebView2EnvironmentOptions opts = null;
@@ -876,7 +901,7 @@ namespace VakantieVeilingenBieder
                 topbarBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
                 topbarBrowser.CoreWebView2.WebMessageReceived += OnTopbarWebMessage;
                 topbarBrowser.CoreWebView2.NavigationCompleted += delegate { SyncTabsToTopbar(); SyncChromeLayout(); };
-                string topbarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "topbar-ui.html");
+                string topbarPath = ResolveAssetPath("topbar-ui.html", "frontend");
                 if (File.Exists(topbarPath)) topbarBrowser.Source = new Uri(topbarPath);
 
                 // --- 2. Sidebar WebView Init ---
@@ -888,10 +913,10 @@ namespace VakantieVeilingenBieder
                 sidebarBrowser.CoreWebView2.NavigationCompleted += delegate {
                     SyncChromeLayout();
                     SyncSidebarHud();
-                    AppendTerminal("INFO", "Umutistan Luxury Sniper v2.0 devrede.", AccentEmerald);
-                    AppendTerminal("SNIPER", "Varsayılan: Son 1 sn | Maks: 32 EUR | Artış: +1 EUR", AccentAmber);
+                    AppendTerminal("INFO", "Martinistan Vavabid Sniper v2.0 devrede.", AccentEmerald);
+                    AppendTerminal("SNIPER", "Varsayilan: Son 1 sn | Maks: 32 EUR | Artis: +1 EUR", AccentAmber);
                 };
-                string sidebarPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sidebar-ui.html");
+                string sidebarPath = ResolveAssetPath("sidebar-ui.html", "frontend");
                 if (File.Exists(sidebarPath)) sidebarBrowser.Source = new Uri(sidebarPath);
 
                 // --- 3. Settings WebView Init ---
@@ -899,7 +924,7 @@ namespace VakantieVeilingenBieder
                 settingsBrowser.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 settingsBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
                 settingsBrowser.CoreWebView2.WebMessageReceived += OnSettingsWebMessage;
-                string settingsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings-ui.html");
+                string settingsPath = ResolveAssetPath("settings-ui.html", "frontend");
                 if (File.Exists(settingsPath)) settingsBrowser.Source = new Uri(settingsPath);
 
                 await terminalBrowser.EnsureCoreWebView2Async(environment);
@@ -909,12 +934,15 @@ namespace VakantieVeilingenBieder
                 terminalBrowser.CoreWebView2.NavigationCompleted += delegate {
                     terminalBrowser.CoreWebView2.ExecuteScriptAsync("if(window.loadEntries)window.loadEntries(" + json.Serialize(logHistory) + ");");
                 };
-                terminalBrowser.Source = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "terminal-ui.html"));
+                string termPath = ResolveAssetPath("terminal-ui.html", "frontend");
+                if (File.Exists(termPath)) terminalBrowser.Source = new Uri(termPath);
+
                 await dialogBrowser.EnsureCoreWebView2Async(environment);
                 dialogBrowser.CoreWebView2.Settings.IsZoomControlEnabled = false;
                 dialogBrowser.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 dialogBrowser.CoreWebView2.WebMessageReceived += OnDialogMessage;
-                dialogBrowser.Source = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dialog-ui.html"));
+                string dlgPath = ResolveAssetPath("dialog-ui.html", "frontend");
+                if (File.Exists(dlgPath)) dialogBrowser.Source = new Uri(dlgPath);
                 foreach (var browser in new[] { topbarBrowser, sidebarBrowser, settingsBrowser, terminalBrowser }) {
                     string shortcuts = "if(!window.__umutKeys){window.__umutKeys=true;document.addEventListener('keydown',function(e){if(e.key==='F2'){e.preventDefault();chrome.webview.postMessage({action:'rename_tab'});}},true);}";
                     await browser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(shortcuts);
@@ -1023,7 +1051,7 @@ namespace VakantieVeilingenBieder
                 if (!string.IsNullOrEmpty(darkCss)) {
                     string cssInject = "(() => { let el=document.getElementById('umutistan-dark');if(!el){el=document.createElement('style');el.id='umutistan-dark';document.head.appendChild(el);}el.textContent=" + json.Serialize(darkCss) + "; })();";
                     await page.Browser.CoreWebView2.ExecuteScriptAsync(cssInject);
-                    string themeScript = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "site-theme.js");
+                    string themeScript = ResolveAssetPath("site-theme.js", "frontend");
                     if (File.Exists(themeScript)) await page.Browser.CoreWebView2.ExecuteScriptAsync(File.ReadAllText(themeScript));
                 }
                 if (!string.IsNullOrEmpty(adapterScript)) {

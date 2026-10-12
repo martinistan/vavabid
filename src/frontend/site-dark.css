@@ -1,0 +1,23 @@
+/* Semantic OLED palette. Never flatten all divs, invert media or recolor every span. */
+:root { color-scheme:dark; --umut-bg:#000; --umut-panel:#101615; --umut-input:#121b18; --umut-line:#30453b; --umut-text:#e8f1ec; --umut-muted:#9eb3a8; }
+html,body { background-color:var(--umut-bg)!important; color:var(--umut-text)!important; }
+[data-umut-surface="base"] { background-color:#000!important; }
+[data-umut-surface="panel"] { background-color:var(--umut-panel)!important; }
+[data-umut-surface="control"] { background-color:var(--umut-input)!important; border-color:var(--umut-line)!important; }
+[data-umut-ink] { color:var(--umut-text)!important; }
+[data-umut-border] { border-color:#2a3a32!important; }
+[data-umut-fade] { background-image:linear-gradient(90deg,transparent,#101615 75%)!important; }
+[data-umut-before]::before,[data-umut-after]::after { background-color:#101615!important; background-image:none!important; }
+input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]):not([type=range]):not([type=color]),textarea,select,option,optgroup,[role=combobox],[role=listbox],[role=option],[class*="select__control"],[class*="select__menu"],[class*="select__option"],.choices__inner,.choices__list--dropdown {
+  color:#e8f1ec!important; background-color:#121b18!important; border-color:#30453b!important; text-shadow:none!important;
+}
+input::placeholder,textarea::placeholder,[class*="select__placeholder"] { color:#9caf9f!important; opacity:1!important; }
+input:disabled,select:disabled,textarea:disabled,[role=combobox][aria-disabled=true] { color:#84938b!important; background-color:#0b110e!important; border-color:#243229!important; opacity:1!important; cursor:not-allowed; }
+[role=option][aria-selected=true],[class*="select__option--is-selected"] { background-color:#184931!important; color:#d4ffe6!important; }
+:is(input,textarea,select,[role=combobox]):focus-visible { outline:2px solid #44dba0!important; outline-offset:2px; box-shadow:none!important; }
+button:focus-visible,a:focus-visible { outline:2px solid #44dba0; outline-offset:3px; }
+img,picture,video,canvas { filter:none!important; }
+.auction__countdown-text,[data-testid="current-bid"],.current-bid { text-shadow:none!important; font-variant-numeric:tabular-nums; }
+::-webkit-scrollbar { width:9px; height:9px; }
+::-webkit-scrollbar-track { background:#000; }
+::-webkit-scrollbar-thumb { background:#304239; border:2px solid #000; border-radius:8px; }

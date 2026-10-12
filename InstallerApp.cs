@@ -1,3 +1,8 @@
+// ============================================================================
+// MARTINISTAN VAVABID ONE-CLICK INSTALLER & UPDATER
+// Developed by Martinistan / Martiny (@martinistan)
+// ============================================================================
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,8 +40,8 @@ namespace UmutistanInstaller
             if (!forceWizard && File.Exists(mainExe) && File.Exists(settingsFile))
             {
                 try {
-                    AIWizardForm.QuickUpdatePayload();
-                    AIWizardForm.EnsureShortcutCreated();
+                    MartinyWizardForm.QuickUpdatePayload();
+                    MartinyWizardForm.EnsureShortcutCreated();
                 } catch { }
 
                 try {
@@ -50,11 +55,11 @@ namespace UmutistanInstaller
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AIWizardForm());
+            Application.Run(new MartinyWizardForm());
         }
     }
 
-    public sealed class AIWizardForm : Form
+    public sealed class MartinyWizardForm : Form
     {
         static readonly Color BgDark = Color.FromArgb(9, 9, 11);
         static readonly Color BgCard = Color.FromArgb(18, 18, 20);
@@ -89,9 +94,9 @@ namespace UmutistanInstaller
         readonly TextBox txtDefaultStep = new TextBox();
         readonly TextBox txtDefaultSec = new TextBox();
 
-        public AIWizardForm()
+        public MartinyWizardForm()
         {
-            Text = "Umutistan Dolandırıcılık Hizmetleri - Otonom Kurulum Asistanı";
+            Text = "Martinistan Vavabid Sniper Suite - Setup Assistant";
             Size = new Size(740, 640);
             MinimumSize = new Size(740, 640);
             StartPosition = FormStartPosition.CenterScreen;

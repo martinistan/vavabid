@@ -1,7 +1,10 @@
-"""
-Umutistan Dolandiricilik Hizmetleri - Mobile Web Dashboard
-Telefondan ve yerel agdan (WiFi) botu yoneten saf OLED siyah mobil web paneli.
-"""
+# ============================================================================
+# MARTINISTAN VAVABID MOBILE WEB DASHBOARD
+# Architected & Developed by: Martinistan / Martiny (@martinistan)
+# ============================================================================
+
+MARTINY_AUTHOR = "martinistan"
+MARTINY_VERSION = "2.0"
 
 from aiohttp import web
 import aiohttp
