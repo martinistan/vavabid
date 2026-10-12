@@ -84,3 +84,13 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /nologo /target:winexe /
 ## 📜 Lisans & Sorumluluk Reddi
 
 Bu yazılım yalnızca eğitim ve kişisel otomasyon amacıyla geliştirilmiştir. Kullanımdan doğabilecek hesap yaptırımları ve maddi sorumluluklar kullanıcıya aittir.
+
+---
+
+## ⚖️ Açık Kaynak Esinlenme & Geliştirme Beyanı (Attribution)
+
+Bu proje, aslen [Soneritics/VakantieVeilingenBieder](https://github.com/Soneritics/VakantieVeilingenBieder) açık kaynak deposundan esinlenilerek ve temel alınarak geliştirilmiştir. 
+
+Eski altyapı yerine; **yapay zeka (AI) asistanı desteğiyle** baştan sona modern teknolojilere (Microsoft WebView2, C# WinForms, çok sekmeli mimari, Python Discord botu, CallMeBot WhatsApp köprüsü, mobil Web Dashboard ve otonom bilgisayar kapatma/güvenlik sistemleri) yükseltilmiş ve tamamen yeniden inşa edilmiştir.
+
+Orijinal projenin yazarlarına açık kaynak topluluğuna sağladıkları ilham için teşekkür edilir.

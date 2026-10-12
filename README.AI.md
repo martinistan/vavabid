@@ -157,4 +157,10 @@ C:\VakantieVeilingenBot\
 
 ---
 
+## ⚖️ 7. Open Source Heritage & Attribution
+
+This project was originally inspired by and adapted from the legacy open-source repository [Soneritics/VakantieVeilingenBieder](https://github.com/Soneritics/VakantieVeilingenBieder). It has been completely rebuilt, modernized, and extended with the assistance of Artificial Intelligence (AI) to introduce a Chromium-based Microsoft WebView2 architecture, multi-tab sniper engine, modern Chrome UI, Python Discord/WhatsApp services, and autonomous safety protections.
+
+---
+
 *Authored for AI Agents and Autonomous Coding Assistants maintaining the Vavabid project.*
