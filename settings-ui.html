@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Umutistan Luxury Settings</title>
+  <style>
+    :root {
+      --bg-base: #09090c;
+      --bg-card: #131318;
+      --bg-input: #1a1a24;
+      --bg-hover: #22222e;
+      --border: #252530;
+      --border-focus: #3b82f6;
+      --accent-emerald: #10b981;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.35);
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-amber: #fbbf24;
+      --accent-red: #ef4444;
+      --text-main: #f4f4f6;
+      --text-muted: #8e8e9e;
+      --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+      --font-mono: "Consolas", "JetBrains Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      padding: 24px 32px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: 100vh;
+    }
+
+    body::-webkit-scrollbar {
+      width: 6px;
+    }
+    body::-webkit-scrollbar-track {
+      background: #09090c;
+    }
+    body::-webkit-scrollbar-thumb {
+      background: #252532;
+      border-radius: 3px;
+    }
+
+    /* Header */
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-icon {
+      font-size: 26px;
+      filter: drop-shadow(0 0 8px var(--accent-emerald-glow));
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent-emerald) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .btn-back {
+      background: #181820;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      background: #232330;
+      color: #fff;
+      border-color: #3b3b4f;
+    }
+
+    /* Grid Layout */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Glassmorphic Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: #323242;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1a1a24;
+    }
+
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: #fff;
+    }
+
+    .badge-feature {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .badge-wa {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-discord {
+      background: rgba(88, 101, 242, 0.15);
+      color: #7983f5;
+      border: 1px solid rgba(88, 101, 242, 0.3);
+    }
+
+    .badge-web {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 38px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 12px;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+      background: #1e1e2c;
+    }
+
+    .input-password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-eye {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .btn-eye:hover {
+      color: #fff;
+    }
+
+    /* Toggle Switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      background: #171720;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .toggle-text {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #2b2b38;
+      transition: .25s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent-emerald);
+      box-shadow: 0 0 10px var(--accent-emerald-glow);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Buttons */
+    .btn-test {
+      background: #1e2438;
+      border: 1px solid #303e68;
+      border-radius: 8px;
+      color: #60a5fa;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 9px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn-test:hover {
+      background: #253152;
+      color: #93c5fd;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .test-result-badge {
+      margin-left: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Discord Channels Grid */
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px;
+      background: #111116;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: #9ca3af;
+    }
+
+    .channel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 6px var(--accent-emerald-glow);
+    }
+
+    /* Web IP Pill */
+    .ip-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #111e2e;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #38bdf8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ip-pill:hover {
+      background: #162b42;
+      border-color: #0284c7;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+    }
+
+    /* Bottom Action Bar */
+    .action-bar {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-size: 13.5px;
+      font-weight: 800;
+      padding: 12px 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 16px var(--accent-emerald-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+    }
+
+    .save-status-toast {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--accent-emerald);
+      transition: opacity 0.3s ease;
+    }
+  </style>
+  <link rel="stylesheet" href="ui-theme.css">
+</head>
+<body class="settings">
+
+  <!-- Header -->
+  <div class="settings-header">
+    <div class="header-left">
+      <span class="header-icon">⚙️</span>
+      <div>
+        <div class="header-title">SİSTEM & ENTEGRASYON MERKEZİ</div>
+        <div class="header-sub">UMUTİSTAN LUXURY BOT CONTROL PANEL</div>
+      </div>
+    </div>
+    <button class="btn-back" onclick="sendAction('close_settings')">
+      <span>◀</span> İhalelere Dön
+    </button>
+  </div>
+
+  <div class="settings-grid">
+
+    <!-- Card 1: WhatsApp -->
+    <div class="card">
+      <div class="card-title-row">
+        <span class="card-title">📱 WHATSAPP ANLIK BİLDİRİM ENTEGRASYONU</span>
+        <span class="badge-feature badge-wa">CallMeBot API</span>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-text">İhale kazanıldığında anında WhatsApp mesajı gönder</span>
+        <label class="switch">
+          <input type="checkbox" id="chkWhatsApp">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Hedef WhatsApp Numarası (+ Ülke Koduyla, örn: +905xxxxxxxxx veya +316xxxxxxxx):</label>
+        <input type="text" id="txtWhatsAppPhone" class="form-input" placeholder="+905xxxxxxxxx">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">CallMeBot API Anahtarı:</label>
+        <input type="text" id="txtWhatsAppApiKey" class="form-input" placeholder="CallMeBot'tan aldığınız API anahtarı">
+      </div>
+
+      <div class="test-row" style="display: flex; align-items: center;">
+        <button class="btn-test" onclick="testWhatsApp()">
+          <span>💬</span> Test WhatsApp Bildirimi Gönder
+        </button>
+        <span id="waTestResult" class="test-result-badge"></span>
+      </div>
+    </div>
+
+    <!-- Card 2: Discord Bot -->
+    <div class="card">
+      <div class="card-title-row">
+        <span class="card-title">🤖 DISCORD BOT & KANAL YÖNETİMİ</span>
+        <span class="badge-feature badge-discord">6/6 Senkronize Kanal</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Discord Bot Token:</label>
+        <div class="input-password-wrapper">
+          <input type="password" id="txtDiscordToken" class="form-input" placeholder="Bot Token">
+          <button class="btn-eye" onclick="togglePasswordVisibility('txtDiscordToken')">👁️</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Discord Sunucu (Guild) ID:</label>
+        <input type="text" id="txtGuildId" class="form-input" placeholder="Sunucu ID (Örn: 123456789012345678)">
+      </div>
+
+      <div class="form-label" style="margin-top: 10px;">Otomatik Yönetilen Kanallar (Hepsi Aktif & Canlı):</div>
+      <div class="channels-grid">
+        <div class="channel-item"><span class="channel-dot"></span>#aktif-ihaleler</div>
+        <div class="channel-item"><span class="channel-dot"></span>#log-teklifler</div>
+        <div class="channel-item"><span class="channel-dot"></span>#log-hatalar</div>
+        <div class="channel-item"><span class="channel-dot"></span>#log-sistem</div>
+        <div class="channel-item"><span class="channel-dot"></span>#bildirimler</div>
+        <div class="channel-item"><span class="channel-dot"></span>#kazanılanlar-arşiv</div>
+      </div>
+    </div>
+
+    <!-- Card 3: Mobil Web Dashboard -->
+    <div class="card">
+      <div class="card-title-row">
+        <span class="card-title">🌐 MOBİL WEB DASHBOARD & TELEFON ERİŞİMİ</span>
+        <span class="badge-feature badge-web">Local WiFi Hub</span>
+      </div>
+
+      <div class="web-fields">
+        <div class="form-group">
+          <label class="form-label">Mobil Güvenlik PIN Kodu (4 Hane):</label>
+          <input type="text" id="txtWebPin" class="form-input" maxlength="4" placeholder="1234">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Web Sunucu Port:</label>
+          <input type="text" id="txtWebPort" class="form-input" placeholder="5000">
+        </div>
+      </div>
+
+      <div id="ipPill" class="ip-pill" onclick="copyWebUrl()" title="Tıklayınca kopyalar">
+        <span>🔗 Canlı WiFi Web Paneli:</span>
+        <span id="txtWebUrlDisplay" style="font-family: var(--font-mono);">http://127.0.0.1:5000</span>
+        <span style="font-size: 11px; opacity: 0.7;">(Kopyala)</span>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button class="btn-save" onclick="saveSettings()">
+        <span>💾</span> AYARLARI KAYDET VE EŞİTLE
+      </button>
+      <span id="saveStatus" class="save-status-toast"></span>
+    </div>
+
+  </div>
+
+  <script>
+    let currentWebUrl = "http://127.0.0.1:5000";
+
+    function sendAction(actionName, payload) {
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage(Object.assign({ action: actionName }, payload || {}));
+      }
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const el = document.getElementById(inputId);
+      if (el) {
+        el.type = el.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    function copyWebUrl() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(currentWebUrl);
+      }
+      sendAction('copy_web_url', { url: currentWebUrl });
+      const pill = document.getElementById('ipPill');
+      pill.style.borderColor = '#10b981';
+      setTimeout(() => pill.style.borderColor = '#1e3a5f', 1500);
+    }
+
+    function testWhatsApp() {
+      const phone = document.getElementById('txtWhatsAppPhone').value.trim();
+      const apikey = document.getElementById('txtWhatsAppApiKey').value.trim();
+      const resEl = document.getElementById('waTestResult');
+      resEl.innerText = "Mesaj gönderiliyor...";
+      resEl.style.color = "#9ca3af";
+
+      sendAction('test_whatsapp', { phone: phone, apikey: apikey });
+    }
+
+    function saveSettings() {
+      const data = {
+        whatsapp_enabled: document.getElementById('chkWhatsApp').checked ? "1" : "0",
+        whatsapp_target_phone: document.getElementById('txtWhatsAppPhone').value.trim(),
+        whatsapp_apikey: document.getElementById('txtWhatsAppApiKey').value.trim(),
+        discord_token: document.getElementById('txtDiscordToken').value.trim(),
+        guild_id: document.getElementById('txtGuildId').value.trim(),
+        web_pin: document.getElementById('txtWebPin').value.trim() || "1234",
+        web_port: document.getElementById('txtWebPort').value.trim() || "5000"
+      };
+
+      sendAction('save_settings', { data: data });
+    }
+
+    // Called dynamically by C#
+    window.loadSettings = function(cfg, localIp) {
+      if (!cfg) return;
+      document.getElementById('chkWhatsApp').checked = (cfg.whatsapp_enabled === "1");
+      document.getElementById('txtWhatsAppPhone').value = cfg.whatsapp_target_phone || "";
+      document.getElementById('txtWhatsAppApiKey').value = cfg.whatsapp_apikey || "";
+      document.getElementById('txtDiscordToken').value = cfg.discord_token || "";
+      document.getElementById('txtGuildId').value = cfg.guild_id || "";
+      document.getElementById('txtWebPin').value = cfg.web_pin || "1234";
+      document.getElementById('txtWebPort').value = cfg.web_port || "5000";
+
+      const port = cfg.web_port || "5000";
+      currentWebUrl = "http://" + (localIp || "127.0.0.1") + ":" + port;
+      document.getElementById('txtWebUrlDisplay').innerText = currentWebUrl;
+    };
+
+    window.onSettingsSaved = function(ok, msg) {
+      const statusEl = document.getElementById('saveStatus');
+      statusEl.innerText = (ok ? "✅ " : "❌ ") + msg;
+      statusEl.style.color = ok ? "#10b981" : "#ef4444";
+      setTimeout(() => { statusEl.innerText = ""; }, 4000);
+    };
+
+    window.onWhatsAppTestResult = function(ok, msg) {
+      const resEl = document.getElementById('waTestResult');
+      resEl.innerText = (ok ? "✅ " : "❌ ") + msg;
+      resEl.style.color = ok ? "#10b981" : "#ef4444";
+    };
+  </script>
+</body>
+</html>

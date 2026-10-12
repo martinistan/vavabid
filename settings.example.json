@@ -1,0 +1,13 @@
+{
+  "discord_token": "YOUR_DISCORD_BOT_TOKEN",
+  "guild_id": "YOUR_DISCORD_GUILD_ID",
+  "whatsapp_enabled": "1",
+  "whatsapp_target_phone": "+905xxxxxxxxx",
+  "whatsapp_apikey": "YOUR_CALLMEBOT_APIKEY",
+  "web_pin": "1234",
+  "web_port": "5000",
+  "default_max_bid": "32",
+  "default_increment": "1",
+  "default_seconds": "1",
+  "stop_group_on_first_win": "1"
+}

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Umutistan Luxury Sniper HUD</title>
+  <style>
+    :root {
+      --bg-hud: #07090c;
+      --bg-pill: #10131a;
+      --bg-pill-hover: #181d28;
+      --border: #1e2430;
+      --border-focus: #3b82f6;
+      --accent-emerald: #10b981;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.4);
+      --accent-cyan: #06b6d4;
+      --accent-amber: #fbbf24;
+      --accent-red: #ef4444;
+      --text-main: #f4f4f6;
+      --text-muted: #8e8e9e;
+      --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+      --font-mono: "Consolas", "JetBrains Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-hud);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      height: 48px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      gap: 10px;
+      border-bottom: 1px solid #141c1a;
+      border-top: none;
+    }
+
+    /* Section 1: Timer & Arm Status */
+    .hud-timer-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .hud-timer {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent-amber);
+      letter-spacing: 1px;
+      min-width: 90px;
+      text-align: center;
+      padding: 3px 6px;
+      background: #0d1017;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .hud-timer.danger {
+      color: var(--accent-red);
+      border-color: rgba(239, 68, 68, 0.6);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .hud-badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .hud-badge.offline {
+      background: #141720;
+      color: #888894;
+      border-color: #262c3a;
+    }
+
+    .hud-badge.online {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+    }
+
+    .hud-btn-arm {
+      height: 30px;
+      padding: 0 11px;
+      border-radius: 6px;
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .hud-btn-arm.green {
+      background: #10b981;
+      color: #000;
+    }
+
+    .hud-btn-arm.green:hover {
+      background: #059669;
+    }
+
+    .hud-btn-arm.red {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    /* Section 2: Stepper Pills (Directly Editable Inputs + 1-by-1 Continuous Hold) */
+    .hud-steppers-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .hud-pill {
+      height: 30px;
+      background: var(--bg-pill);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 3px;
+      gap: 3px;
+    }
+
+    .hud-pill-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 0 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hud-step-btn {
+      width: 20px;
+      height: 22px;
+      background: #191f2c;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease;
+      touch-action: none;
+    }
+
+    .hud-step-btn:hover {
+      background: #232b3d;
+      border-color: #3b4860;
+    }
+
+    .hud-step-btn:active {
+      background: #2f3a52;
+      color: var(--accent-emerald);
+    }
+
+    .hud-input-wrap {
+      display: flex;
+      align-items: center;
+      background: #0d1017;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0 3px;
+      height: 22px;
+      transition: border-color 0.15s ease;
+    }
+
+    .hud-input-wrap:focus-within {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 6px rgba(59, 130, 246, 0.35);
+    }
+
+    .hud-pill-input {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff;
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 36px;
+      text-align: center;
+      -moz-appearance: textfield;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .hud-pill-input::-webkit-outer-spin-button,
+    .hud-pill-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .hud-pill-unit {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--accent-emerald);
+      padding-right: 2px;
+    }
+
+    /* Chrome Navigation Group (Geri, İleri, Yenile / F5) */
+    .chrome-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .chrome-nav-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      color: #9da3af;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      outline: none;
+    }
+
+    .chrome-nav-btn:hover {
+      background: #1c2230;
+      border-color: #2b3548;
+      color: #fff;
+    }
+
+    .chrome-nav-btn:active {
+      background: #2a344a;
+      transform: scale(0.92);
+    }
+
+    .nav-svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Section 3: Chrome Omnibox / Web URL */
+    .hud-url-group {
+      flex: 1;
+      min-width: 200px;
+      max-width: 440px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: #11141c;
+      border: 1px solid #222938;
+      border-radius: 16px;
+      height: 28px;
+      padding: 0 4px 0 10px;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .hud-url-group:focus-within {
+      background: #0b0d14;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+    }
+
+    .hud-url-icon {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+
+    .hud-url-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      min-width: 0;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .hud-url-input::placeholder {
+      color: #555566;
+    }
+
+    .hud-btn-go {
+      height: 22px;
+      padding: 0 8px;
+      background: #10b981;
+      border: none;
+      border-radius: 4px;
+      color: #000;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .hud-btn-go:hover {
+      background: #059669;
+    }
+
+    .hud-btn-sub {
+      height: 22px;
+      padding: 0 6px;
+      background: #161b26;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: #b0b0c0;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .hud-btn-sub:hover {
+      background: #202738;
+      color: #fff;
+    }
+
+    .hud-url-feedback {
+      position: absolute;
+      bottom: -18px;
+      left: 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    .hud-url-feedback.ok {
+      color: var(--accent-emerald);
+    }
+
+    .hud-url-feedback.error {
+      color: var(--accent-red);
+    }
+
+    /* Section 4: Quick Action Buttons */
+    .hud-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .hud-chk-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .hud-chk-label input {
+      accent-color: var(--accent-emerald);
+      cursor: pointer;
+      width: 13px;
+      height: 13px;
+    }
+
+    .hud-icon-btn {
+      width: 26px;
+      height: 26px;
+      background: #12151e;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #9494a4;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .hud-icon-btn:hover {
+      background: #1c2230;
+      color: #fff;
+      border-color: #3b4860;
+    }
+
+    .hud-select {
+      height: 24px;
+      background: #12151e;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: #9494a4;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 0 4px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .hud-select:hover {
+      background: #1c2230;
+      border-color: #3b4860;
+      color: #fff;
+    }
+
+    .hud-select:focus {
+      border-color: var(--border-focus);
+    }
+
+    .hud-btn-abort {
+      height: 24px;
+      padding: 0 7px;
+      background: #dc2626;
+      border: 1px solid #f87171;
+      border-radius: 5px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      animation: pulse 1s infinite;
+      white-space: nowrap;
+    }
+
+    .ui-icon {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .control-drawer { display: none; }
+  </style>
+  <link rel="stylesheet" href="ui-theme.css">
+</head>
+<body class="hud-bar top-dock">
+
+  <!-- 1. Chrome Navigasyon Butonları (Geri, İleri, Yenile / F5) -->
+  <div class="chrome-nav-group">
+    <button class="chrome-nav-btn" title="Geri (Alt + Sol Ok)" onclick="sendAction('nav_back')">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+    <button class="chrome-nav-btn" title="İleri (Alt + Sağ Ok)" onclick="sendAction('nav_forward')">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <button id="btnReload" class="chrome-nav-btn" title="Sayfayı Yenile (F5 / Ctrl + R)" onclick="sendAction('nav_reload')">
+      <svg class="nav-svg" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+  </div>
+
+  <!-- 2. Chrome Omnibox / Web URL -->
+  <div class="hud-url-group">
+    <span class="hud-url-icon" title="Güvenli Bağlantı (VakantieVeilingen)">🔒</span>
+    <input type="text" id="txtAuctionUrl" class="hud-url-input" 
+           placeholder="veilingen/... veya https://www.vakantieveilingen.be/veilingen/..." 
+           spellcheck="false" autocomplete="off" 
+           onkeydown="handleUrlKey(event)">
+    <button id="btnGoUrl" class="hud-btn-go" onclick="submitUrl(false)" title="İhaleye Git (Enter)">➔ Git</button>
+    <button class="hud-btn-sub" onclick="pasteAndGo()" title="Panodan Yapıştır ve Git">📋 Yapıştır</button>
+    <button class="hud-btn-sub" onclick="submitUrl(true)" title="Yeni Sekmede Aç">+ Sekme</button>
+    <div id="urlFeedback" class="hud-url-feedback"></div>
+  </div>
+
+  <!-- 3. Geri Sayım & Bot Durumu -->
+  <div class="hud-timer-group">
+    <div id="countdown" class="hud-timer" title="İhale bitişine kalan süre">00:00:01</div>
+    <button id="badgeStatus" class="hud-badge offline" onclick="sendAction('toggle_arm')" title="Durum: Değiştirmek için tıklayın">OFFLINE</button>
+    <button id="btnArmToggle" class="hud-btn-arm green" onclick="sendAction('toggle_arm')">⚡ İZLEME BAŞLAT</button>
+  </div>
+
+  <!-- 4. Hızlı Stepper Ayarları (Doğrudan Yazılabilir Input + Basılı Tutunca Hızlı Artırma/Azaltma) -->
+  <div class="hud-steppers-group">
+    <div class="hud-pill" title="Maksimum Teklif Limiti (Yazabilir veya basılı tutarak artırıp indirebilirsiniz)">
+      <span class="hud-pill-lbl">LİMİT</span>
+      <button class="hud-step-btn" 
+              onmousedown="startHold('max', -1)" 
+              onmouseup="stopHold()" 
+              onmouseleave="stopHold()" 
+              ontouchstart="startHold('max', -1)" 
+              ontouchend="stopHold()">−</button>
+      <div class="hud-input-wrap">
+        <input type="number" id="valMax" class="hud-pill-input" value="32" min="1" max="99999" step="1"
+               oninput="onNumberInput('max', this.value)"
+               onchange="onNumberChange('max', this.value)">
+        <span class="hud-pill-unit">€</span>
+      </div>
+      <button class="hud-step-btn" 
+              onmousedown="startHold('max', 1)" 
+              onmouseup="stopHold()" 
+              onmouseleave="stopHold()" 
+              ontouchstart="startHold('max', 1)" 
+              ontouchend="stopHold()">+</button>
+    </div>
+
+    <div class="hud-pill" title="Teklif Artış Adımı (Yazabilir veya basılı tutarak artırıp indirebilirsiniz)">
+      <span class="hud-pill-lbl">ARTIŞ</span>
+      <button class="hud-step-btn" 
+              onmousedown="startHold('step', -1)" 
+              onmouseup="stopHold()" 
+              onmouseleave="stopHold()" 
+              ontouchstart="startHold('step', -1)" 
+              ontouchend="stopHold()">−</button>
+      <div class="hud-input-wrap">
+        <input type="number" id="valStep" class="hud-pill-input" value="1" min="1" max="1000" step="1"
+               oninput="onNumberInput('step', this.value)"
+               onchange="onNumberChange('step', this.value)">
+        <span class="hud-pill-unit">€</span>
+      </div>
+      <button class="hud-step-btn" 
+              onmousedown="startHold('step', 1)" 
+              onmouseup="stopHold()" 
+              onmouseleave="stopHold()" 
+              ontouchstart="startHold('step', 1)" 
+              ontouchend="stopHold()">+</button>
+    </div>
+
+    <div class="hud-pill" title="Tetikleme Saniyesi (Yazabilir veya basılı tutarak artırıp indirebilirsiniz)">
+      <span class="hud-pill-lbl">TETİK</span>
+      <button class="hud-step-btn" 
+              onmousedown="startHold('sec', -1)" 
+              onmouseup="stopHold()" 
+              onmouseleave="stopHold()" 
+              ontouchstart="startHold('sec', -1)" 
+              ontouchend="stopHold()">−</button>
+      <div class="hud-input-wrap">
+        <input type="number" id="valSec" class="hud-pill-input" value="1" min="1" max="60" step="1"
+               oninput="onNumberInput('sec', this.value)"
+               onchange="onNumberChange('sec', this.value)">
+        <span class="hud-pill-unit">sn</span>
+      </div>
+      <button class="hud-step-btn" 
+              onmousedown="startHold('sec', 1)" 
+              onmouseup="stopHold()" 
+              onmouseleave="stopHold()" 
+              ontouchstart="startHold('sec', 1)" 
+              ontouchend="stopHold()">+</button>
+    </div>
+  </div>
+
+  <!-- 4. Ek Araçlar & Kısayollar -->
+  <div class="hud-actions-group">
+    <label class="hud-chk-label" title="İlk ihale kazanıldığında diğer sekmeleri durdur">
+      <input type="checkbox" id="chkStopWin" checked onchange="sendCheckbox('stop_on_win', this.checked)">
+      <span>Kazanmada Durdur</span>
+    </label>
+    <select id="selShutdown" class="hud-select" onchange="sendAction('set_shutdown_mode', { mode: this.value })" title="PC Otomatik Kapatma Seçeneği">
+      <option value="none">PC: Kapalı</option>
+      <option value="on_end">PC: İhale Bitişi</option>
+      <option value="on_limit">PC: Limit Aşımı</option>
+      <option value="on_any">PC: Bitiş/Limit</option>
+    </select>
+    <button id="btnAbortShutdown" class="hud-btn-abort" style="display:none;" onclick="sendAction('abort_shutdown')" title="Kapatmayı İptal Et (shutdown /a)">⛔ İPTAL (60s)</button>
+    <button class="hud-icon-btn" title="İhale URL Kopyala" onclick="sendAction('copy_url')">
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    </button>
+    <button class="hud-icon-btn" title="Mobil WiFi Linki Kopyala" onclick="sendAction('copy_mobile')">
+      <svg class="ui-icon" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+    </button>
+  </div>
+
+  <div class="control-drawer"></div>
+
+  <script>
+    let state = {
+      max: 32,
+      step: 1,
+      sec: 1,
+      armed: false
+    };
+
+    let holdTimer = null;
+    let holdInterval = null;
+
+    function startHold(param, delta) {
+      stopHold();
+      stepChange(param, delta);
+      holdTimer = setTimeout(() => {
+        holdInterval = setInterval(() => {
+          stepChange(param, delta);
+        }, 65);
+      }, 350);
+    }
+
+    function stopHold() {
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+    }
+
+    // TextContent compatibility for tests
+    ['valMax', 'valStep', 'valSec'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        Object.defineProperty(el, 'textContent', {
+          get: function() {
+            const unit = id === 'valSec' ? ' sn' : ' €';
+            return this.value + unit;
+          },
+          configurable: true
+        });
+      }
+    });
+
+    function sendAction(actionName, extra) {
+      if (window.chrome && window.chrome.webview) {
+        const payload = Object.assign({ action: actionName }, extra || {});
+        window.chrome.webview.postMessage(payload);
+      }
+    }
+
+    function stepChange(param, delta) {
+      if (param === 'max') {
+        state.max = Math.max(1, state.max + delta);
+        const el = document.getElementById('valMax');
+        if (el) el.value = state.max;
+      } else if (param === 'step') {
+        state.step = Math.max(1, state.step + delta);
+        const el = document.getElementById('valStep');
+        if (el) el.value = state.step;
+      } else if (param === 'sec') {
+        state.sec = Math.max(1, Math.min(60, state.sec + delta));
+        const el = document.getElementById('valSec');
+        if (el) el.value = state.sec;
+      }
+
+      sendAction('update_params', {
+        max: state.max,
+        step: state.step,
+        sec: state.sec
+      });
+    }
+
+    function onNumberInput(param, raw) {
+      const val = parseInt(raw, 10);
+      if (isNaN(val) || val < 1) return;
+      if (param === 'max') state.max = val;
+      else if (param === 'step') state.step = val;
+      else if (param === 'sec') state.sec = Math.min(60, val);
+
+      sendAction('update_params', {
+        max: state.max,
+        step: state.step,
+        sec: state.sec
+      });
+    }
+
+    function onNumberChange(param, raw) {
+      let val = parseInt(raw, 10);
+      if (isNaN(val) || val < 1) val = (param === 'max' ? 32 : 1);
+      if (param === 'max') {
+        state.max = val;
+        document.getElementById('valMax').value = val;
+      } else if (param === 'step') {
+        state.step = val;
+        document.getElementById('valStep').value = val;
+      } else if (param === 'sec') {
+        state.sec = Math.min(60, Math.max(1, val));
+        document.getElementById('valSec').value = state.sec;
+      }
+
+      sendAction('update_params', {
+        max: state.max,
+        step: state.step,
+        sec: state.sec
+      });
+    }
+
+    function sendCheckbox(key, val) {
+      sendAction('update_checkbox', { key: key, value: val });
+    }
+
+    function handleUrlKey(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitUrl(false);
+      }
+    }
+
+    function submitUrl(inNewTab) {
+      const input = document.getElementById('txtAuctionUrl');
+      const val = (input ? input.value : '').trim();
+      if (!val) {
+        showFeedback(false, 'Lütfen bir URL girin');
+        return;
+      }
+      sendAction(inNewTab ? 'new_tab_url' : 'navigate_url', { url: val });
+    }
+
+    function pasteAndGo() {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(text => {
+          if (text) {
+            const input = document.getElementById('txtAuctionUrl');
+            if (input) input.value = text.trim();
+            submitUrl(false);
+          }
+        }).catch(() => {
+          sendAction('paste_url');
+        });
+      } else {
+        sendAction('paste_url');
+      }
+    }
+
+    window.setAuctionUrlInput = function(url) {
+      const input = document.getElementById('txtAuctionUrl');
+      if (input) {
+        input.value = url;
+        submitUrl(false);
+      }
+    };
+
+    window.updateCurrentUrl = function(url) {
+      const input = document.getElementById('txtAuctionUrl');
+      if (!input) return;
+      if (document.activeElement !== input) {
+        input.value = url || '';
+      }
+    };
+
+    window.showUrlFeedback = function(ok, msg, normUrl) {
+      const fb = document.getElementById('urlFeedback');
+      if (!fb) return;
+      fb.className = 'hud-url-feedback ' + (ok ? 'ok' : 'error');
+      fb.innerText = msg;
+      fb.style.opacity = '1';
+      if (ok && normUrl) {
+        const input = document.getElementById('txtAuctionUrl');
+        if (input && document.activeElement !== input) input.value = normUrl;
+      }
+      setTimeout(() => { fb.style.opacity = '0'; }, 4000);
+    };
+
+    function showFeedback(ok, msg) {
+      window.showUrlFeedback(ok, msg);
+    }
+
+    window.updateHud = function(timeStr, isArmed, max, step, sec, secLeft) {
+      const cd = document.getElementById('countdown');
+      if (cd) {
+        cd.innerText = timeStr;
+        if (secLeft <= 5 && isArmed) cd.classList.add('danger');
+        else cd.classList.remove('danger');
+      }
+
+      state.armed = !!isArmed;
+      const badge = document.getElementById('badgeStatus');
+      const btn = document.getElementById('btnArmToggle');
+      if (badge && btn) {
+        if (state.armed) {
+          badge.className = 'hud-badge online';
+          badge.innerText = 'ONLINE';
+          btn.className = 'hud-btn-arm red';
+          btn.innerText = '🛑 İZLEMEYİ DURDUR';
+        } else {
+          badge.className = 'hud-badge offline';
+          badge.innerText = 'OFFLINE';
+          btn.className = 'hud-btn-arm green';
+          btn.innerText = '⚡ İZLEME BAŞLAT';
+        }
+      }
+
+      if (max !== undefined) {
+        state.max = Number(max);
+        const el = document.getElementById('valMax');
+        if (el && document.activeElement !== el) el.value = state.max;
+      }
+      if (step !== undefined) {
+        state.step = Number(step);
+        const el = document.getElementById('valStep');
+        if (el && document.activeElement !== el) el.value = state.step;
+      }
+      if (sec !== undefined) {
+        state.sec = Number(sec);
+        const el = document.getElementById('valSec');
+        if (el && document.activeElement !== el) el.value = state.sec;
+      }
+    };
+
+    let shutdownInterval = null;
+    window.onShutdownCountdown = function(seconds) {
+      const btn = document.getElementById('btnAbortShutdown');
+      if (!btn) return;
+      btn.style.display = 'inline-flex';
+      let left = Number(seconds) || 60;
+      btn.innerText = '⛔ İPTAL (' + left + 's)';
+      if (shutdownInterval) clearInterval(shutdownInterval);
+      shutdownInterval = setInterval(function() {
+        left--;
+        if (left <= 0) {
+          clearInterval(shutdownInterval);
+          btn.innerText = '⛔ KAPATILIYOR...';
+        } else {
+          btn.innerText = '⛔ İPTAL (' + left + 's)';
+        }
+      }, 1000);
+    };
+
+    window.onShutdownAborted = function() {
+      if (shutdownInterval) { clearInterval(shutdownInterval); shutdownInterval = null; }
+      const btn = document.getElementById('btnAbortShutdown');
+      if (btn) btn.style.display = 'none';
+    };
+
+    window.setShutdownMode = function(mode) {
+      const sel = document.getElementById('selShutdown');
+      if (sel && mode) sel.value = mode;
+    };
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && (e.key === 'r' || e.key === 'R'))) {
+        e.preventDefault();
+        sendAction('nav_reload');
+      } else if (e.altKey && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        sendAction('nav_back');
+      } else if (e.altKey && e.key === 'ArrowRight') {
+        e.preventDefault();
+        sendAction('nav_forward');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Sensible user data and secrets
+settings.json
+database.db
+*.log
+logs/
+Profile/
+Screenshots/
+temp_payload.zip
+
+# Visual Studio / Build outputs
+bin/
+obj/
+build/
+dist/
+__pycache__/
+*.pyc
+.vs/
+.idea/
+*.user
+*.suo
